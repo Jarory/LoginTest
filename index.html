@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <title>登入系統</title>
+</head>
+<body>
+
+
+<div class="container">
+
+    <div class="left-panel">
+        <h1>會員系統</h1>
+
+        <p>
+            這是一個使用 Node.js、Express 與 MySQL
+            製作的簡易登入系統。
+            <br><br>
+            功能包含：
+            <br>
+            ・會員註冊
+            <br>
+            ・登入驗證
+            <br>
+            ・帳號重複檢查
+            <br>
+            ・登入狀態保存
+        </p>
+    </div>
+
+    <div class="right-panel">
+
+        <h2>登入</h2>
+
+        <input type="text" id="username" placeholder="帳號">
+
+        <input type="password" id="password" placeholder="密碼">
+
+        <input
+        type="password"
+        id="confirmPassword"
+        placeholder="確認密碼"
+        style="display:none;"
+        >
+
+        <button onclick="showRegister()">註冊</button>
+
+        <button onclick="login()">登入</button>
+
+    </div>
+
+</div>
+
+<script src="index.js"></script>
+
+</body>
+</html>
