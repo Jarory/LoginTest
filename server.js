@@ -1,8 +1,10 @@
-const jwt = require("jsonwebtoken");  //驗證使用者身份
-const bcrypt = require("bcrypt");  //密碼雜湊
+const jwt = require("jsonwebtoken");  // 驗證使用者身份
+const bcrypt = require("bcrypt");  // 密碼雜湊
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
+const path = require('path');
+const fs = require('fs'); // 💡 引入檔案系統模組
 
 const app = express();
 const SECRET_KEY = "mysecretkey";
@@ -10,28 +12,25 @@ const SECRET_KEY = "mysecretkey";
 app.use(cors());
 app.use(express.json());
 
-// const db = mysql.createConnection({
-//     host: "localhost",
-//     user: "root",
-//     password: "@Jay0110",
-//     database: "login_system"
-// });
+// 💡 修正：自動偵測雲端 Git 到底是存在大寫 Public 還小寫 public 資料夾
+let targetFolder = 'public';
+if (fs.existsSync(path.join(__dirname, 'Public'))) {
+    targetFolder = 'Public';
+}
+console.log("👉 伺服器目前成功鎖定前端資料夾：", targetFolder);
 
-const path = require('path');
+// 1. 必須先開放靜態資料夾（這樣 style.css、index.js、home.js 才能被順利下載）
+app.use(express.static(path.join(__dirname, targetFolder)));
 
-// 1. 必須先開放 public 資料夾（這行千萬不能拿掉！這樣按鈕的 index.js 和美編 style.css 才能被下載）
-app.use(express.static(path.join(__dirname, 'Public')));
-
-// 2. 設定首頁路由（讓輸入網址時直接讀取 public 內的 index.html）
+// 2. 設定首頁路由（讓輸入網址時直接讀取 index.html）
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'Public', 'index.html')); 
+    res.sendFile(path.join(__dirname, targetFolder, 'index.html')); 
 });
 
-// 3. （選填）如果你後續登入成功要轉跳到 home.html，也可以加上這個路由
-app.get('/home', (req, res) => {
-    res.sendFile(path.join(__dirname, 'Public', 'home.html'));
+// 3. 設定會員主頁路由（提供正確的相對路徑跳轉）
+app.get('/home.html', (req, res) => {
+    res.sendFile(path.join(__dirname, targetFolder, 'home.html'));
 });
-
 
 const db = mysql.createConnection({
     host: process.env.MYSQLHOST,
@@ -49,111 +48,52 @@ db.connect((err) => {
     }
 });
 
-//雜湊版本
+// 雜湊版本註冊
 app.post("/register", async (req, res) => {
-
     const { username, password } = req.body;
-
-    const checkSql =
-    "SELECT * FROM users WHERE username = ?";
+    const checkSql = "SELECT * FROM users WHERE username = ?";
 
     db.query(checkSql, [username], async (err, result) => {
-
         if (err) {
-
-            return res.json({
-                success: false,
-                message: "系統錯誤"
-            });
+            return res.json({ success: false, message: "系統錯誤" });
         }
-
         if (result.length > 0) {
-
-            return res.json({
-                success: false,
-                message: "帳號已存在"
-            });
+            return res.json({ success: false, message: "帳號已存在" });
         }
 
-        const hashedPassword =
-        await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const insertSql = "INSERT INTO users (username, password) VALUES (?, ?)";
 
-        const insertSql =
-        "INSERT INTO users (username, password) VALUES (?, ?)";
-
-        db.query(
-            insertSql,
-            [username, hashedPassword],
-            (err, result) => {
-
-                if (err) {
-
-                    return res.json({
-                        success: false,
-                        message: "註冊失敗"
-                    });
-                }
-
-                return res.json({
-                    success: true,
-                    message: "註冊成功"
-                });
+        db.query(insertSql, [username, hashedPassword], (err, result) => {
+            if (err) {
+                return res.json({ success: false, message: "註冊失敗" });
             }
-        );
+            return res.json({ success: true, message: "註冊成功" });
+        });
     });
 });
 
-//驗證資料版本
+// 驗證資料版本登入
 app.post("/login", (req, res) => {
-
     const { username, password } = req.body;
-
-    const sql =
-    "SELECT * FROM users WHERE username = ?";
+    const sql = "SELECT * FROM users WHERE username = ?";
 
     db.query(sql, [username], async (err, result) => {
-
         if (err) {
-
-            return res.json({
-                success: false,
-                message: "登入失敗"
-            });
+            return res.json({ success: false, message: "登入失敗" });
         }
-
         if (result.length === 0) {
-
-            return res.json({
-                success: false,
-                message: "帳號不存在"
-            });
+            return res.json({ success: false, message: "帳號不存在" });
         }
 
         const user = result[0];
-
-        const isMatch =
-        await bcrypt.compare( //加密比對
-            password,
-            user.password
-        );
+        const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
-
-            return res.json({
-                success: false,
-                message: "密碼錯誤"
-            });
+            return res.json({ success: false, message: "密碼錯誤" });
         }
 
-        const token = jwt.sign(
-            {
-                username: username
-            },
-            SECRET_KEY,
-            {
-                expiresIn: "1h"
-            }
-        );
+        const token = jwt.sign({ username: username }, SECRET_KEY, { expiresIn: "1h" });
 
         return res.json({
             success: true,
@@ -164,46 +104,31 @@ app.post("/login", (req, res) => {
 });
 
 function authenticateToken(req, res, next) {
-
     const authHeader = req.headers["authorization"];
-
-    const token =
-    authHeader && authHeader.split(" ")[1];
+    const token = authHeader && authHeader.split(" ")[1];
 
     if (!token) {
-
         return res.sendStatus(401);
     }
 
-    jwt.verify(
-        token,
-        SECRET_KEY,
-        (err, user) => {
-
-            if (err) {
-
-                return res.sendStatus(403);
-            }
-
-            req.user = user;
-
-            next();
+    jwt.verify(token, SECRET_KEY, (err, user) => {
+        if (err) {
+            return res.sendStatus(403);
         }
-    );
+        req.user = user;
+        next();
+    });
 }
 
-app.get(
-    "/profile",
-    authenticateToken,
-    (req, res) => {
+app.get("/profile", authenticateToken, (req, res) => {
+    res.json({
+        message: "驗證成功",
+        user: req.user
+    });
+});
 
-        res.json({
-            message: "驗證成功",
-            user: req.user
-        });
-    }
-);
-
-app.listen(3000, () => {
-    console.log("伺服器啟動：http://localhost:3000");
+// 💡 修正：Render 部署必備！優先使用雲端環境變數提供的 PORT，否則才使用 3000
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`伺服器啟動，正運行於 Port: ${PORT}`);
 });
