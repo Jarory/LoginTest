@@ -18,10 +18,10 @@ app.use(express.json());
 // });
 const path = require('path');
 
-// 讓首頁直接讀取 index.html
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
+// ❌ 不要只寫 app.use(express.static('public'));
+//  改用下面這行，透過 __dirname 強制鎖定伺服器當前資料夾路徑
+app.use(express.static(path.join(__dirname, 'public'))); 
+
 
 const db = mysql.createConnection({
     host: process.env.MYSQLHOST,
