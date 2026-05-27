@@ -19,8 +19,8 @@
         return;
     }
 
+    //login
     const response = await fetch(
-        "http://localhost:3000/register",
         {
             method: "POST",
             headers: {
@@ -65,8 +65,8 @@ async function login() {
     const password =
     document.getElementById("password").value;
 
+    //register
     const response = await fetch(
-        "http://localhost:3000/login",
         {
             method: "POST",
             headers: {
