@@ -16,11 +16,12 @@ app.use(express.json());
 //     password: "@Jay0110",
 //     database: "login_system"
 // });
+
 const path = require('path');
 
-//  改用下面這行，透過 __dirname 強制鎖定伺服器當前資料夾路徑
-app.use(express.static(path.join(__dirname, 'public'))); 
-
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html')); 
+});
 
 const db = mysql.createConnection({
     host: process.env.MYSQLHOST,
