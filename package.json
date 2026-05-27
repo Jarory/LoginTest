@@ -1,0 +1,22 @@
+{
+  "name": "login_system",
+  "version": "1.0.0",
+  "description": "1.後端cmd啟動=>cd到對應資料夾=>輸入 nodemon server.js 2.打開MySQL檢查資料是否成功匯入=>\r 輸入=>\r USE login_system;\r SELECT \\* FROM users;",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jarory/------.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Jarory/------/issues"
+  },
+  "homepage": "https://github.com/Jarory/------#readme"
+}
