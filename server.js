@@ -16,6 +16,12 @@ app.use(express.json());
 //     password: "@Jay0110",
 //     database: "login_system"
 // });
+const path = require('path');
+
+// 讓首頁直接讀取 index.html
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 const db = mysql.createConnection({
     host: process.env.MYSQLHOST,
