@@ -20,7 +20,7 @@ app.use(express.json());
 const path = require('path');
 
 // 1. 先開放 public 資料夾（讓瀏覽器找得到 style.css 和 index.js）
-app.use(express.static(path.join(__dirname, 'public')));
+//app.use(express.static(path.join(__dirname, 'public')));
 
 // 2. 設定首頁路由（讓使用者輸入網址時，直接看到 index.html）
 app.get('/', (req, res) => {
