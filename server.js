@@ -10,11 +10,19 @@ const SECRET_KEY = "mysecretkey";
 app.use(cors());
 app.use(express.json());
 
+// const db = mysql.createConnection({
+//     host: "localhost",
+//     user: "root",
+//     password: "@Jay0110",
+//     database: "login_system"
+// });
+
 const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "@Jay0110",
-    database: "login_system"
+    host: process.env.MYSQLHOST,
+    user: process.env.MYSQLUSER,
+    password: process.env.MYSQLPASSWORD,
+    database: process.env.MYSQLDATABASE,
+    port: process.env.MYSQLPORT
 });
 
 db.connect((err) => {
