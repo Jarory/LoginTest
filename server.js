@@ -20,16 +20,16 @@ app.use(express.json());
 const path = require('path');
 
 // 1. 必須先開放 public 資料夾（這行千萬不能拿掉！這樣按鈕的 index.js 和美編 style.css 才能被下載）
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'Public')));
 
 // 2. 設定首頁路由（讓輸入網址時直接讀取 public 內的 index.html）
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html')); 
+    res.sendFile(path.join(__dirname, 'Public', 'index.html')); 
 });
 
 // 3. （選填）如果你後續登入成功要轉跳到 home.html，也可以加上這個路由
 app.get('/home', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'home.html'));
+    res.sendFile(path.join(__dirname, 'Public', 'home.html'));
 });
 
 
