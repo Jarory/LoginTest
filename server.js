@@ -1,10 +1,10 @@
-const jwt = require("jsonwebtoken");  // 驗證使用者身份
-const bcrypt = require("bcrypt");  // 密碼雜湊
+const jwt = require("jsonwebtoken");  //驗證使用者身份
+const bcrypt = require("bcrypt");  //密碼雜湊
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
 const path = require('path');
-const fs = require('fs'); // 💡 引入檔案系統模組
+const fs = require('fs'); // 引入檔案系統模組
 
 const app = express();
 const SECRET_KEY = "mysecretkey";
@@ -12,23 +12,26 @@ const SECRET_KEY = "mysecretkey";
 app.use(cors());
 app.use(express.json());
 
-// 💡 修正：自動偵測雲端 Git 到底是存在大寫 Public 還小寫 public 資料夾
+// 💡 終極相容性路徑偵測：自動判斷雲端是 Public 還小寫 public
 let targetFolder = 'public';
 if (fs.existsSync(path.join(__dirname, 'Public'))) {
     targetFolder = 'Public';
+} else if (fs.existsSync(path.join(__dirname, 'public'))) {
+    targetFolder = 'public';
 }
+
 console.log("👉 伺服器目前成功鎖定前端資料夾：", targetFolder);
 
-// 1. 必須先開放靜態資料夾（這樣 style.css、index.js、home.js 才能被順利下載）
+// 1. 先開放資料夾（這行千萬不能拿掉！這樣按鈕的 index.js 和美編 style.css 才能被下載）
 app.use(express.static(path.join(__dirname, targetFolder)));
 
-// 2. 設定首頁路由（讓輸入網址時直接讀取 index.html）
+// 2. 設定首頁路由（讓輸入網址時直接讀取網頁檔案）
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, targetFolder, 'index.html')); 
 });
 
-// 3. 設定會員主頁路由（提供正確的相對路徑跳轉）
-app.get('/home.html', (req, res) => {
+// 3. 會員主頁路由
+app.get('/home', (req, res) => {
     res.sendFile(path.join(__dirname, targetFolder, 'home.html'));
 });
 
@@ -48,7 +51,7 @@ db.connect((err) => {
     }
 });
 
-// 雜湊版本註冊
+//雜湊版本
 app.post("/register", async (req, res) => {
     const { username, password } = req.body;
     const checkSql = "SELECT * FROM users WHERE username = ?";
@@ -73,7 +76,7 @@ app.post("/register", async (req, res) => {
     });
 });
 
-// 驗證資料版本登入
+//驗證資料版本
 app.post("/login", (req, res) => {
     const { username, password } = req.body;
     const sql = "SELECT * FROM users WHERE username = ?";
@@ -95,11 +98,7 @@ app.post("/login", (req, res) => {
 
         const token = jwt.sign({ username: username }, SECRET_KEY, { expiresIn: "1h" });
 
-        return res.json({
-            success: true,
-            message: "登入成功",
-            token: token
-        });
+        return res.json({ success: true, message: "登入成功", token: token });
     });
 });
 
@@ -121,14 +120,11 @@ function authenticateToken(req, res, next) {
 }
 
 app.get("/profile", authenticateToken, (req, res) => {
-    res.json({
-        message: "驗證成功",
-        user: req.user
-    });
+    res.json({ message: "驗證成功", user: req.user });
 });
 
-// 💡 修正：Render 部署必備！優先使用雲端環境變數提供的 PORT，否則才使用 3000
+// 💡 雲端平台部署必須動態讀取 process.env.PORT，否則會跟 Render 衝突
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`伺服器啟動，正運行於 Port: ${PORT}`);
+    console.log(`伺服器啟動於 port: ${PORT}`);
 });
