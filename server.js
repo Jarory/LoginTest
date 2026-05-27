@@ -18,7 +18,6 @@ app.use(express.json());
 // });
 const path = require('path');
 
-// ❌ 不要只寫 app.use(express.static('public'));
 //  改用下面這行，透過 __dirname 強制鎖定伺服器當前資料夾路徑
 app.use(express.static(path.join(__dirname, 'public'))); 
 
