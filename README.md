@@ -226,6 +226,6 @@ bcrypt 比對密碼
 
 # 專案說明
 
-本專案為個人學習用途。
+本專案為個人學習用途
 
 資料庫連線資訊、JWT Secret Key 等敏感資訊皆使用環境變數（Environment Variables）管理，不包含於此 Repository
