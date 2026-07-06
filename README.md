@@ -1,12 +1,12 @@
 # LoginTest — 會員登入系統
 
-> 使用 Node.js、Express.js 與 MySQL 從零打造的會員登入系統，實作使用者註冊、登入、密碼加密、JWT 身分驗證以及雲端部署。
+> 使用 Node.js、Express.js 與 MySQL 從零打造的會員登入系統，實作使用者註冊、登入、密碼加密、JWT 身分驗證以及雲端部署
 
-🌐 **Live Demo**
+**Live Demo**
 
 https://logintest-yhla.onrender.com/
 
-> ⚠️ Render 免費方案第一次開啟可能需要等待約 30～60 秒，屬正常現象。
+> 提示：　Render 免費方案第一次開啟可能需要等待約 30～60 秒，屬正常現象
 
 ---
 
@@ -14,29 +14,33 @@ https://logintest-yhla.onrender.com/
 
 ## 登入畫面
 
-> （建議放登入頁截圖）
+![登入畫面](./img/登入頁面.png)
 
 ---
 
 ## 會員首頁
 
-> （建議放登入成功後畫面）
+![會員首頁](./img/會員首頁.png)
 
 ---
 
-## 資料庫
+## 資料庫（Railway MySQL）
 
-> （建議放 MySQL users 資料表截圖）
+![Railway MySQL](./img/資料庫.png)
+
+> 本專案使用 **Railway 提供的 MySQL Cloud Database** 儲存會員資料，密碼皆經過 **bcrypt** 雜湊後存入資料庫，不以明文方式保存
 
 ---
 
-## 專案介紹
+# 專案介紹
 
-這個專案是我在學習後端開發時，獨立完成的第一個完整會員登入系統。
+這個專案是我在學習後端開發時，獨立完成的第一個完整會員登入系統
 
-最初僅完成基本的帳號密碼登入功能，之後重新設計整個登入流程，導入 **MySQL、bcrypt 密碼雜湊、JWT 身分驗證** 等技術，希望讓登入流程更接近實際網站的運作方式。
+最初僅完成基本的帳號密碼登入功能，之後重新設計整個登入流程，導入 **MySQL、bcrypt 密碼雜湊、JWT 身分驗證** 等技術，希望讓登入流程更接近實際網站的運作方式
 
-除了完成功能外，也透過不斷除錯與重構，理解登入驗證背後的設計理念與安全性考量。
+資料庫採用 **Railway 提供的雲端 MySQL 服務**，並搭配 Render 部署後端 API，實際體驗完整的前後端開發流程
+
+除了完成功能外，也透過不斷除錯與重構，理解登入驗證背後的設計理念與安全性考量
 
 ---
 
@@ -57,6 +61,7 @@ https://logintest-yhla.onrender.com/
 - 使用 Middleware 驗證 Token
 - 前後端以 Fetch API + JSON 進行資料交換
 - 使用 Render 完成雲端部署
+- 使用 Railway MySQL Cloud Database 管理會員資料
 - 使用環境變數管理資料庫連線資訊
 
 ---
@@ -74,7 +79,8 @@ Node.js + Express.js
             ├── JWT Authentication
             ├── bcrypt Password Hashing
             ▼
-        MySQL Database
+MySQL Database
+   (Railway)
 ```
 
 ---
@@ -84,7 +90,7 @@ Node.js + Express.js
 - 會員註冊
 - 會員登入
 - 帳號重複檢查
-- MySQL 使用者資料儲存
+- Railway MySQL 雲端資料庫管理會員資料
 - bcrypt 密碼雜湊
 - JWT Token 產生
 - JWT Middleware 驗證
@@ -120,7 +126,7 @@ Node.js + Express.js
 
 ## Database
 
-- MySQL
+- MySQL（Railway Cloud Database）
 
 ## Authentication
 
@@ -145,7 +151,7 @@ Node.js + Express.js
 Express 接收 Request
         │
         ▼
-MySQL 查詢使用者
+Railway MySQL 查詢使用者
         │
         ▼
 bcrypt 比對密碼
@@ -167,11 +173,13 @@ bcrypt 比對密碼
 驗證登入身份
 ```
 
+---
+
 # 專案亮點
 
 ✔ 使用 Express 建立 REST API
 
-✔ 使用 MySQL 管理會員資料
+✔ Railway MySQL Cloud Database
 
 ✔ bcrypt 密碼雜湊
 
@@ -193,6 +201,7 @@ bcrypt 比對密碼
 
 - Node.js 與 Express 建立後端 API
 - MySQL 資料庫操作與會員管理
+- 使用 Railway 建立雲端 MySQL Database
 - Fetch API 串接前後端
 - bcrypt 密碼雜湊與驗證流程
 - JWT 身分驗證流程
@@ -219,4 +228,4 @@ bcrypt 比對密碼
 
 本專案為個人學習用途。
 
-資料庫連線資訊、JWT Secret Key 等敏感資訊皆使用環境變數管理，不包含於此 Repository。
+資料庫連線資訊、JWT Secret Key 等敏感資訊皆使用環境變數（Environment Variables）管理，不包含於此 Repository
